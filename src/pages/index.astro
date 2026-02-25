@@ -1,11 +1,38 @@
 ---
-import Welcome from '../components/Welcome.astro';
+import PortfolioContent from '../components/PortfolioContent.astro';
 import Layout from '../layouts/Layout.astro';
-
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+import '../styles/portfolio.css';
 ---
 
-<Layout>
-	<Welcome />
+<Layout
+	title="Alvaro Olvera — Senior Frontend Developer"
+	description="Senior Frontend Developer & Tech Lead portfolio."
+>
+	<Fragment slot="head">
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			rel="preload"
+			as="style"
+			href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap"
+		/>
+		<link
+			href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap"
+			rel="stylesheet"
+			media="print"
+			onload="this.media='all'"
+		/>
+		<noscript>
+			<link
+				href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap"
+				rel="stylesheet"
+			/>
+		</noscript>
+	</Fragment>
+
+	<PortfolioContent />
+
+	<script>
+		import '../scripts/portfolio.js';
+	</script>
 </Layout>
