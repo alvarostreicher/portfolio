@@ -1,0 +1,234 @@
+<section id="projects">
+  <div class="section-header reveal">
+    <p class="section-tag">04 — Projects &amp; Demos</p>
+    <h2 class="section-title">Knowledge in Action</h2>
+  </div>
+  <p class="projects-intro reveal">Six live interactive demos — each reconstructed from real production challenges. Interact with them directly.</p>
+  <div class="projects-grid">
+    <div class="proj-card reveal">
+      <div class="proj-card-header">
+        <span class="proj-badge badge-b2b">B2B Dashboard · BigCommerce 2024</span>
+        <h3>B2B Order Management</h3>
+        <p>Led the payments &amp; B2B orders dashboard — bulk order management, carrier connections, client accounts, and invoice dispatch. Filter by status, send invoices inline.</p>
+      </div>
+      <div class="proj-demo">
+        <div class="b2b-demo">
+          <div class="b2b-toolbar">
+            <button class="mini-btn mini-btn-ghost b2b-filter active" data-filter="all">All</button>
+            <button class="mini-btn mini-btn-ghost b2b-filter" data-filter="pending">Pending</button>
+            <button class="mini-btn mini-btn-ghost b2b-filter" data-filter="paid">Paid</button>
+            <button class="mini-btn mini-btn-ghost b2b-filter" data-filter="overdue">Overdue</button>
+            <button class="mini-btn mini-btn-primary" id="bulkInvoice" style="margin-left:auto">📨 Send All Invoices</button>
+          </div>
+          <div class="b2b-table">
+            <div class="b2b-thead"><span>Order</span><span>Client · Carrier</span><span>Amount</span><span>Status</span><span>Action</span></div>
+            <div id="b2bBody"></div>
+          </div>
+          <div class="b2b-summary">
+            <div class="b2b-sum-item"><div class="b2b-sum-val" id="sumTotal">$0</div><div class="b2b-sum-label">Total Volume</div></div>
+            <div class="b2b-sum-item"><div class="b2b-sum-val" id="sumPaid" style="color:#4ade80">0</div><div class="b2b-sum-label">Invoices Paid</div></div>
+            <div class="b2b-sum-item"><div class="b2b-sum-val" id="sumPending" style="color:#f59e0b">0</div><div class="b2b-sum-label">Pending / Due</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="proj-source">BigCommerce — Enterprise B2B Commerce Platform · React + Python/Django</div>
+    </div>
+
+    <div class="proj-card reveal">
+      <div class="proj-card-header">
+        <span class="proj-badge badge-med">Form Library · Globant Medical 2022</span>
+        <h3>Accessible Form Component Library</h3>
+        <p>Built a reusable component library for large medical forms. This demo starts with minimal semantics: toggle each accessibility enhancement to watch the score increase in real time.</p>
+      </div>
+      <div class="proj-demo">
+        <div class="form-demo">
+          <div class="a11y-demo-guide">
+            <p class="a11y-demo-instruction">How it works: each toggle applies a semantic fix to the form and recalculates the score from accessibility checks.</p>
+            <div class="a11y-feature-grid" id="a11yFeatureToggles">
+              <label class="a11y-feature-toggle"><input id="a11yToggleLabels" class="a11y-toggle" type="checkbox"> Bind labels to controls (`for` + `id`)</label>
+              <label class="a11y-feature-toggle"><input id="a11yToggleRequired" class="a11y-toggle" type="checkbox"> Add required and `aria-required`</label>
+              <label class="a11y-feature-toggle"><input id="a11yToggleHint" class="a11y-toggle" type="checkbox"> Connect helper text with `aria-describedby`</label>
+              <label class="a11y-feature-toggle"><input id="a11yToggleGroup" class="a11y-toggle" type="checkbox"> Add radiogroup semantics</label>
+              <label class="a11y-feature-toggle"><input id="a11yToggleLive" class="a11y-toggle" type="checkbox"> Enable live score semantics</label>
+            </div>
+          </div>
+          <div class="form-preview">
+            <div class="form-field-wrap">
+              <label class="form-label" id="f-name-label">Patient Name <span class="required">*</span> <span class="a11y-badge">aria-required</span></label>
+              <input class="form-input" id="f-name" type="text" placeholder="Enter full name" autocomplete="name">
+              <span class="form-hint" id="f-name-hint">As it appears on official ID</span>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:.6rem">
+              <div class="form-field-wrap">
+                <label class="form-label" id="f-dob-label">Date of Birth <span class="required">*</span></label>
+                <input class="form-input" id="f-dob" type="date" autocomplete="bday">
+              </div>
+              <div class="form-field-wrap">
+                <label class="form-label" id="f-dept-label">Department</label>
+                <select class="form-select" id="f-dept">
+                  <option value="">Select...</option>
+                  <option>Cardiology</option><option>Neurology</option><option>Oncology</option><option>Pediatrics</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-field-wrap">
+              <fieldset style="border:none;padding:0">
+                <legend class="form-label" id="f-priority-legend">Priority <span class="a11y-badge">role=radiogroup</span></legend>
+                <div class="form-radio-group" id="f-priority-group">
+                  <label class="form-radio"><input type="radio" name="priority" value="low"> Low</label>
+                  <label class="form-radio"><input type="radio" name="priority" value="med"> Medium</label>
+                  <label class="form-radio"><input type="radio" name="priority" value="high"> High</label>
+                </div>
+              </fieldset>
+            </div>
+          </div>
+          <div class="a11y-score-bar">
+            <span class="a11y-score-label" id="a11yScoreLabel">A11y Score</span>
+            <div class="a11y-score-track" id="a11yTrack"><div class="a11y-score-fill" id="a11yFill" style="transform:scaleX(0);background:#f59e0b" aria-hidden="true"></div></div>
+            <span class="a11y-score-val" id="a11yScoreVal" style="color:#f59e0b">0%</span>
+          </div>
+          <div class="a11y-under-hood">
+            <p class="a11y-under-hood-title">What changed under the hood</p>
+            <ul class="a11y-change-list" id="a11yChanges"></ul>
+          </div>
+        </div>
+      </div>
+      <div class="proj-source">Globant — Medical Services · React Component Library + WCAG AA</div>
+    </div>
+
+    <div class="proj-card reveal">
+      <div class="proj-card-header">
+        <span class="proj-badge badge-sql">Backend · Globant Medical 2022</span>
+        <h3>SQL Audit &amp; .NET Endpoint</h3>
+        <p>Beyond frontend — created .NET EF endpoints and audited SQL queries with N+1 problems and missing indexes. Toggle between the problematic and optimized versions.</p>
+      </div>
+      <div class="proj-demo">
+        <div class="sql-demo">
+          <div class="sql-tabs">
+            <button class="sql-tab active" id="sqlBefore">❌ Before — N+1 Query</button>
+            <button class="sql-tab" id="sqlAfter">✓ After — Optimized</button>
+          </div>
+          <div class="code-block" id="sqlCode" style="flex:1;font-size:.6rem;line-height:1.65"></div>
+          <div id="sqlExplain" class="sql-explain"></div>
+          <div class="sql-perf">
+            <div class="sql-perf-item"><div class="sql-perf-val" id="sqlTime" style="color:var(--accent2)">1240ms</div><div class="sql-perf-label">Query Time</div></div>
+            <div class="sql-perf-item"><div class="sql-perf-val" id="sqlScans" style="color:var(--accent2)">847</div><div class="sql-perf-label">Table Scans</div></div>
+            <div class="sql-perf-item"><div class="sql-perf-val" id="sqlRows" style="color:var(--accent2)">N+1</div><div class="sql-perf-label">Query Pattern</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="proj-source">Globant — Medical Services · .NET Entity Framework + SQL Server</div>
+    </div>
+
+    <div class="proj-card reveal">
+      <div class="proj-card-header">
+        <span class="proj-badge badge-airline">Real-time · Globant Airline 2023</span>
+        <h3>Virtualized Real-time Flight Board</h3>
+        <p>The core challenge: thousands of rows updating every second with CSS cell animations — without dropping frames. Achieved via Web Workers + virtual scroll. Watch cells flash live.</p>
+      </div>
+      <div class="proj-demo">
+        <div class="airline-demo">
+          <div class="airline-header">
+            <span style="font-family:'Space Mono',monospace;font-size:.65rem;color:var(--muted)">Live Flight Data</span>
+            <div style="display:flex;gap:.4rem;flex-wrap:wrap">
+              <span class="airline-badge ww-badge" id="workerModeBadge">⚙ Worker: Parallel</span>
+              <span class="airline-badge virt-badge">⬡ Virtualized</span>
+              <span class="airline-badge fps-badge" id="fpsBadge">60 FPS</span>
+            </div>
+          </div>
+          <div class="airline-table-wrap">
+            <div class="airline-thead"><span>Flight</span><span>Route</span><span>Departure</span><span>Gate</span><span>Status</span><span>Passengers</span><span>Luggage</span></div>
+            <div class="airline-body" id="airlineBody" tabindex="0" aria-label="Virtualized flight rows"></div>
+            <div class="virt-info">
+              <span id="virtInfo">Rendering 0 rows (virtualized)</span>
+              <span id="updateCounter">Updates: 0</span>
+            </div>
+          </div>
+          <div class="airline-metrics">
+            <div class="airline-metric"><div class="airline-metric-val" id="airlineUpdates">0</div><div class="airline-metric-label">Updates/sec</div></div>
+            <div class="airline-metric"><div class="airline-metric-val" id="airlineDelayed" style="color:#f59e0b">0</div><div class="airline-metric-label">Delayed</div></div>
+            <div class="airline-metric"><div class="airline-metric-val" id="airlineOntime" style="color:#4ade80">0</div><div class="airline-metric-label">On Time</div></div>
+          </div>
+          <div class="airline-col-metrics">
+            <div class="airline-col-metric">DEP Δ/s <span id="airlineColDep">0</span></div>
+            <div class="airline-col-metric">GATE Δ/s <span id="airlineColGate">0</span></div>
+            <div class="airline-col-metric">STATUS Δ/s <span id="airlineColStatus">0</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="proj-source">Globant — Airline Management · React + Web Workers + CSS Animations</div>
+    </div>
+
+    <div class="proj-card reveal">
+      <div class="proj-card-header">
+        <span class="proj-badge badge-cicd">CI/CD · Globant Airline 2023</span>
+        <h3>GitHub Actions Pipeline</h3>
+        <p>Managed the full CI/CD pipeline for the airline SPA — install, lint, test, build, and deploy to AWS. Every PR ran this exact flow. Click to simulate it.</p>
+      </div>
+      <div class="proj-demo">
+        <div class="cicd-demo">
+          <div class="pipeline">
+            <div class="pipe-stage"><div class="pipe-node idle" id="pn0">📦</div><div class="pipe-label">Install</div></div>
+            <div class="pipe-arrow"></div>
+            <div class="pipe-stage"><div class="pipe-node idle" id="pn1">🔍</div><div class="pipe-label">Lint</div></div>
+            <div class="pipe-arrow"></div>
+            <div class="pipe-stage"><div class="pipe-node idle" id="pn2">🧪</div><div class="pipe-label">Test</div></div>
+            <div class="pipe-arrow"></div>
+            <div class="pipe-stage"><div class="pipe-node idle" id="pn3">🏗️</div><div class="pipe-label">Build</div></div>
+            <div class="pipe-arrow"></div>
+            <div class="pipe-stage"><div class="pipe-node idle" id="pn4">🚀</div><div class="pipe-label">Deploy</div></div>
+          </div>
+          <div class="cicd-log" id="cicdLog"><span style="color:var(--muted)">Click Run Pipeline to start…</span></div>
+          <button class="cicd-btn" id="runPipeline">▶ Run Pipeline</button>
+        </div>
+      </div>
+      <div class="proj-source">Globant — Airline App · GitHub Actions + AWS S3 + CloudFront</div>
+    </div>
+
+    <div class="proj-card reveal">
+      <div class="proj-card-header">
+        <span class="proj-badge badge-atomic">Atomic Design · Accenture 2019</span>
+        <h3>Atomic Design — Live Component</h3>
+        <p>Built design systems with Storybook at Accenture. Below is a real FlightCard component. Switch modes to highlight how each atomic layer composes to build the final UI.</p>
+      </div>
+      <div class="proj-demo">
+        <div class="atomic-demo">
+          <div class="atomic-tabs">
+            <button class="atomic-tab active" data-mode="final">✦ Final Component</button>
+            <button class="atomic-tab" data-mode="atom">Atoms</button>
+            <button class="atomic-tab" data-mode="molecule">Molecules</button>
+            <button class="atomic-tab" data-mode="organism">Organism</button>
+          </div>
+          <div class="component-stage" id="componentStage">
+            <div class="flight-card" id="flightCardDemo">
+              <div class="flight-card-top">
+                <div class="flight-route">
+                  <span class="flight-code">AM 421</span>
+                  <span class="flight-arrow">→</span>
+                  <span class="flight-code" style="color:var(--muted);font-size:.8rem">MEX · CDG</span>
+                </div>
+                <span class="fc-badge fc-delayed">Delayed</span>
+              </div>
+              <div class="flight-info-row">
+                <div class="fc-info-item"><span class="fc-info-label">Departure</span><span class="fc-info-val">14:35</span></div>
+                <div class="fc-info-item"><span class="fc-info-label">Gate</span><span class="fc-info-val">B-12</span></div>
+                <div class="fc-info-item"><span class="fc-info-label">Aircraft</span><span class="fc-info-val">B-787</span></div>
+              </div>
+              <div class="flight-actions">
+                <button class="fc-btn fc-btn-primary">Check In</button>
+                <button class="fc-btn fc-btn-ghost">Details</button>
+              </div>
+            </div>
+          </div>
+          <div class="atomic-legend" id="atomicLegend" style="display:none">
+            <div class="legend-item"><div class="legend-dot" style="background:#4ade80"></div>Atoms</div>
+            <div class="legend-item"><div class="legend-dot" style="background:var(--accent)"></div>Molecules</div>
+            <div class="legend-item"><div class="legend-dot" style="background:var(--accent3)"></div>Organism</div>
+          </div>
+          <div id="atomicDesc" style="font-family:'Space Mono',monospace;font-size:.62rem;color:var(--muted);line-height:1.6;min-height:28px"></div>
+        </div>
+      </div>
+      <div class="proj-source">Accenture — Component Design System · React + Storybook + Redux</div>
+    </div>
+  </div>
+</section>
