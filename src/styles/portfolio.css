@@ -17,7 +17,7 @@
     .nav-links a:hover{color:var(--accent);}
     .nav-menu-btn{display:none;background:none;border:none;cursor:none;flex-direction:column;align-items:center;justify-content:center;gap:5px;padding:0;width:48px;height:48px;}
     .nav-menu-btn span{display:block;width:24px;height:1.5px;background:var(--accent);}
-    .mobile-nav{display:none;position:fixed;inset:0;z-index:99;background:rgba(6,6,16,.97);backdrop-filter:blur(20px);flex-direction:column;align-items:center;justify-content:center;gap:2.5rem;}
+    .mobile-nav{display:none;position:fixed;inset:0;z-index:140;background:rgba(6,6,16,.97);backdrop-filter:blur(20px);flex-direction:column;align-items:center;justify-content:center;gap:2.5rem;}
     .mobile-nav.open{display:flex;}
     .mobile-nav a{font-family:'Space Mono',monospace;font-size:1.4rem;color:var(--text);text-decoration:none;text-transform:uppercase;letter-spacing:.2em;padding:.75rem 1rem;min-height:48px;display:flex;align-items:center;justify-content:center;}
     .mobile-nav-close{position:absolute;top:1.6rem;right:4vw;background:none;border:none;cursor:none;font-size:1.8rem;color:var(--accent);width:48px;height:48px;display:flex;align-items:center;justify-content:center;}
@@ -115,11 +115,16 @@
     .b2b-toolbar{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;}
     .b2b-filter{font-family:'Space Mono',monospace;font-size:.62rem;padding:.28rem .65rem;border:1px solid var(--border);background:var(--bg);color:var(--muted);border-radius:2px;cursor:none;}
     .b2b-filter.active{border-color:rgba(0,220,255,.4);color:var(--accent);background:rgba(0,220,255,.07);}
-    .b2b-table{flex:1;overflow:hidden;}
+    .b2b-table{flex:1;overflow:auto;}
+    .b2b-table::-webkit-scrollbar{width:3px;height:3px;}
+    .b2b-table::-webkit-scrollbar-thumb{background:var(--border);}
     .b2b-thead{display:grid;grid-template-columns:1fr 1fr .8fr .8fr .7fr;gap:.3rem;padding:.35rem .5rem;border-bottom:1px solid var(--border);font-family:'Space Mono',monospace;font-size:.58rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;}
     .b2b-row{display:grid;grid-template-columns:1fr 1fr .8fr .8fr .7fr;gap:.3rem;padding:.4rem .5rem;border-bottom:1px solid rgba(255,255,255,.03);align-items:center;transition:background .2s;}
     .b2b-row:hover{background:rgba(0,220,255,.04);}
     .b2b-cell{font-family:'Space Mono',monospace;font-size:.62rem;color:#8890b8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .b2b-client{display:flex;flex-direction:column;gap:.12rem;}
+    .b2b-sub{color:var(--muted);font-size:.56rem;}
+    .b2b-action{display:flex;justify-content:flex-start;}
     .b2b-status{display:inline-block;font-size:.58rem;padding:.15rem .45rem;border-radius:2px;font-family:'Space Mono',monospace;}
     .status-paid{color:#4ade80;background:rgba(74,222,128,.1);border:1px solid rgba(74,222,128,.25);}
     .status-pending{color:#f59e0b;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.25);}
@@ -185,18 +190,21 @@
     .ww-badge{background:rgba(0,220,255,.1);border:1px solid rgba(0,220,255,.3);color:var(--accent);}
     .virt-badge{background:rgba(123,92,250,.1);border:1px solid rgba(123,92,250,.3);color:var(--accent3);}
     .fps-badge{background:rgba(74,222,128,.1);border:1px solid rgba(74,222,128,.3);color:#4ade80;}
-    .airline-table-wrap{flex:1;overflow:hidden;border:1px solid var(--border);border-radius:3px;position:relative;}
-    .airline-thead{display:grid;grid-template-columns:.6fr 1fr .8fr .8fr .6fr;gap:.3rem;padding:.35rem .6rem;background:rgba(0,220,255,.04);border-bottom:1px solid var(--border);font-family:'Space Mono',monospace;font-size:.56rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;}
-    .airline-body{overflow-y:auto;max-height:180px;height:180px;position:relative;contain:content;}
+    .airline-table-wrap{flex:1;overflow-x:auto;overflow-y:hidden;border:1px solid var(--border);border-radius:3px;position:relative;}
+    .airline-table-wrap::-webkit-scrollbar{height:3px;}
+    .airline-table-wrap::-webkit-scrollbar-thumb{background:var(--border);}
+    .airline-thead{display:grid;grid-template-columns:.65fr 1.1fr .85fr .75fr .75fr .75fr .75fr;gap:.3rem;padding:.35rem .6rem;background:rgba(0,220,255,.04);border-bottom:1px solid var(--border);font-family:'Space Mono',monospace;font-size:.56rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;min-width:700px;}
+    .airline-body{overflow-y:auto;overflow-x:hidden;max-height:180px;height:180px;position:relative;contain:content;min-width:700px;}
     .airline-body::-webkit-scrollbar{width:3px;}
     .airline-body::-webkit-scrollbar-thumb{background:var(--border);}
     .airline-spacer{width:100%;pointer-events:none;}
     .airline-viewport{position:absolute;top:0;left:0;right:0;will-change:transform;}
-    .airline-row{display:grid;grid-template-columns:.6fr 1fr .8fr .8fr .6fr;gap:.3rem;padding:.38rem .6rem;border-bottom:1px solid rgba(255,255,255,.03);align-items:center;min-height:32px;}
+    .airline-row{display:grid;grid-template-columns:.65fr 1.1fr .85fr .75fr .75fr .75fr .75fr;gap:.3rem;padding:.38rem .6rem;border-bottom:1px solid rgba(255,255,255,.03);align-items:center;min-height:32px;min-width:700px;}
     .airline-cell{font-family:'Space Mono',monospace;font-size:.62rem;color:#8890b8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
     .airline-cell.updated,.flight-status.updated{animation:cellFlash .55s ease-out;}
     .airline-cell.updated.col-dep{color:#60a5fa;}
     .airline-cell.updated.col-gate{color:#f59e0b;}
+    .airline-cell.updated.col-pax,.airline-cell.updated.col-luggage{color:#4ade80;}
     .flight-status.updated.col-status{box-shadow:0 0 0 1px rgba(74,222,128,.35) inset;}
     @keyframes cellFlash{0%{background:rgba(0,220,255,.22);color:var(--accent);}100%{background:transparent;color:inherit;}}
     .flight-status{font-size:.56rem;padding:.12rem .4rem;border-radius:1px;font-family:'Space Mono',monospace;display:inline-block;}
@@ -314,6 +322,23 @@
       .sql-tab,.atomic-tab{padding:.7rem .8rem;}
     }
 
+    body.menu-open{overflow:hidden;}
+
     @media(max-width:900px){.about-grid{grid-template-columns:1fr;}.about-visual{margin:0 auto;}.scroll-indicator{display:none;}}
-    @media(max-width:720px){.projects-grid{column-width:auto;column-count:1;column-gap:0;}.proj-card{margin-bottom:.75rem;}.a11y-feature-grid{grid-template-columns:1fr;}.airline-col-metrics{grid-template-columns:1fr;}}
+    @media(max-width:720px){
+      .projects-grid{column-width:auto;column-count:1;column-gap:0;}
+      .proj-card{margin-bottom:.75rem;}
+      .a11y-feature-grid{grid-template-columns:1fr;}
+      .airline-col-metrics{grid-template-columns:1fr;}
+
+      .b2b-thead{display:none;}
+      .b2b-table{max-height:280px;padding-right:.15rem;}
+      #b2bBody{display:flex;flex-direction:column;gap:.55rem;padding:.1rem;}
+      .b2b-row{grid-template-columns:1fr;gap:.45rem;border:1px solid var(--border);border-radius:4px;padding:.7rem;background:#0a0a1a;}
+      .b2b-cell{display:flex;align-items:flex-start;justify-content:space-between;gap:.65rem;white-space:normal;overflow:visible;text-overflow:clip;}
+      .b2b-cell::before{content:attr(data-label);font-size:.54rem;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;min-width:86px;flex-shrink:0;}
+      .b2b-action{justify-content:flex-end;}
+
+      .airline-thead,.airline-body,.airline-row,.virt-info{min-width:760px;}
+    }
     @media(max-width:640px){nav{padding:1.2rem 5vw;}.nav-links{display:none;}.nav-menu-btn{display:flex;}section{padding:5rem 5vw;}.hero-stats{gap:2rem;}footer{flex-direction:column;text-align:center;}}

@@ -225,10 +225,23 @@ const setupMobileNav = () => {
   const closeNav = document.getElementById('closeNav');
   if (!menuBtn || !mobileNav || !closeNav) return;
 
-  menuBtn.addEventListener('click', () => mobileNav.classList.add('open'));
-  closeNav.addEventListener('click', () => mobileNav.classList.remove('open'));
+  const setMenuOpen = (isOpen) => {
+    mobileNav.classList.toggle('open', isOpen);
+    menuBtn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    document.body.classList.toggle('menu-open', isOpen);
+  };
+
+  menuBtn.setAttribute('aria-expanded', 'false');
+  menuBtn.addEventListener('click', () => setMenuOpen(true));
+  closeNav.addEventListener('click', () => setMenuOpen(false));
+  mobileNav.addEventListener('click', (event) => {
+    if (event.target === mobileNav) setMenuOpen(false);
+  });
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') setMenuOpen(false);
+  });
   document.querySelectorAll('.mob-link').forEach((link) => {
-    link.addEventListener('click', () => mobileNav.classList.remove('open'));
+    link.addEventListener('click', () => setMenuOpen(false));
   });
 };
 
@@ -260,11 +273,11 @@ function renderB2B(){
   const body=document.getElementById('b2bBody');
   body.innerHTML=filtered.map(o=>`
     <div class="b2b-row">
-      <div class="b2b-cell" style="color:var(--accent)">${o.id}</div>
-      <div class="b2b-cell">${o.client}<br><span style="color:var(--muted);font-size:.56rem">${o.carrier}</span></div>
-      <div class="b2b-cell" style="color:var(--text)">${o.amount}</div>
-      <div class="b2b-cell"><span class="b2b-status status-${o.status}">${o.status}</span></div>
-      <div class="b2b-cell"><button class="mini-btn ${o.status==='paid'?'mini-btn-ghost':'mini-btn-success'}" onclick="sendInvoice(this,'${o.id}')" style="font-size:.56rem;padding:.18rem .5rem">${o.status==='paid'?'↓ PDF':'📨 Send'}</button></div>
+      <div class="b2b-cell" data-label="Order" style="color:var(--accent)">${o.id}</div>
+      <div class="b2b-cell b2b-client" data-label="Client"><span>${o.client}</span><span class="b2b-sub">${o.carrier}</span></div>
+      <div class="b2b-cell" data-label="Amount" style="color:var(--text)">${o.amount}</div>
+      <div class="b2b-cell" data-label="Status"><span class="b2b-status status-${o.status}">${o.status}</span></div>
+      <div class="b2b-cell b2b-action" data-label="Action"><button class="mini-btn ${o.status==='paid'?'mini-btn-ghost':'mini-btn-success'}" onclick="sendInvoice(this,'${o.id}')" style="font-size:.56rem;padding:.18rem .5rem">${o.status==='paid'?'↓ PDF':'📨 Send'}</button></div>
     </div>`).join('');
   const paid=orders.filter(o=>o.status==='paid').length;
   const pend=orders.filter(o=>o.status!=='paid').length;
@@ -563,15 +576,37 @@ renderSQL();
   const workerBadge=document.getElementById('workerModeBadge');
   if(!body||!virtInfo||!updateCounter||!delayedMetric||!ontimeMetric||!updatesMetric||!depMetric||!gateMetric||!statusMetric)return;
 
-  // Generate dataset
-  const flights=Array.from({length:TOTAL},(_,i)=>({
-    id:airlines[i%airlines.length]+' '+(400+Math.floor(Math.random()*500)),
-    route:routes[i%routes.length],
-    dep:padTime(6+Math.floor(i*.18),Math.floor(Math.random()*60)),
-    gate:gates[Math.floor(Math.random()*gates.length)],
-    status:statuses[Math.floor(Math.random()*statuses.length)],
-  }));
   function padTime(h,m){return (h%24+'').padStart(2,'0')+':'+(m+'').padStart(2,'0');}
+  function clamp(value,min,max){return Math.min(max,Math.max(min,value));}
+  function createBoardingSnapshot(capacity){
+    const passengers=Math.floor(capacity*(0.3+Math.random()*0.45));
+    const luggage=Math.min(passengers,Math.floor(passengers*(0.55+Math.random()*0.25)));
+    return {passengers,luggage};
+  }
+  function progressBoarding(flight){
+    if(flight.status!=='boarding')return null;
+    const nextPassengers=clamp(flight.passengers+(2+Math.floor(Math.random()*8)),0,flight.capacity);
+    const nextLuggage=clamp(flight.luggage+(1+Math.floor(Math.random()*6)),0,nextPassengers);
+    if(nextPassengers===flight.passengers&&nextLuggage===flight.luggage)return null;
+    return {passengers:nextPassengers,luggage:nextLuggage};
+  }
+
+  // Generate dataset
+  const flights=Array.from({length:TOTAL},(_,i)=>{
+    const capacity=140+Math.floor(Math.random()*120);
+    const status=statuses[Math.floor(Math.random()*statuses.length)];
+    const boardingSnapshot=createBoardingSnapshot(capacity);
+    return {
+      id:airlines[i%airlines.length]+' '+(400+Math.floor(Math.random()*500)),
+      route:routes[i%routes.length],
+      dep:padTime(6+Math.floor(i*.18),Math.floor(Math.random()*60)),
+      gate:gates[Math.floor(Math.random()*gates.length)],
+      status,
+      capacity,
+      passengers:status==='boarding'?boardingSnapshot.passengers:Math.max(18,Math.floor(capacity*(0.2+Math.random()*0.35))),
+      luggage:status==='boarding'?boardingSnapshot.luggage:Math.max(8,Math.floor(capacity*(0.14+Math.random()*0.2))),
+    };
+  });
 
   let updateCount=0;
   let updatesThisSec=0;
@@ -604,6 +639,10 @@ renderSQL();
       const depClass=changed&&changed.has('dep')?' updated col-dep':'';
       const gateClass=changed&&changed.has('gate')?' updated col-gate':'';
       const statusUpdateClass=changed&&changed.has('status')?' updated col-status':'';
+      const paxClass=changed&&changed.has('passengers')?' updated col-pax':'';
+      const luggageClass=changed&&changed.has('luggage')?' updated col-luggage':'';
+      const passengersLabel=f.status==='boarding'?`${f.passengers}/${f.capacity}`:'--';
+      const luggageLabel=f.status==='boarding'?`${f.luggage}`:'--';
       rowsHtml.push(`
       <div class="airline-row" data-row="${i}">
         <div class="airline-cell" style="color:var(--accent)">${f.id}</div>
@@ -611,6 +650,8 @@ renderSQL();
         <div class="airline-cell${depClass}">${f.dep}</div>
         <div class="airline-cell${gateClass}">${f.gate}</div>
         <div class="airline-cell"><span class="flight-status ${statusClass[f.status]}${statusUpdateClass}">${statusLabel[f.status]}</span></div>
+        <div class="airline-cell${paxClass}">${passengersLabel}</div>
+        <div class="airline-cell${luggageClass}">${luggageLabel}</div>
       </div>`);
     }
     body.innerHTML=`<div class="airline-spacer" style="height:${TOTAL*ROW_HEIGHT}px"></div><div class="airline-viewport" style="transform:translateY(${topOffset}px)">${rowsHtml.join('')}</div>`;
@@ -635,7 +676,31 @@ renderSQL();
       if(!fieldSet){fieldSet=new Set();pendingFieldChanges.set(idx,fieldSet);}
       if(Object.prototype.hasOwnProperty.call(change,'dep')){flight.dep=change.dep;fieldSet.add('dep');}
       if(Object.prototype.hasOwnProperty.call(change,'gate')){flight.gate=change.gate;fieldSet.add('gate');}
-      if(Object.prototype.hasOwnProperty.call(change,'status')){flight.status=change.status;fieldSet.add('status');}
+      if(Object.prototype.hasOwnProperty.call(change,'status')){
+        flight.status=change.status;
+        fieldSet.add('status');
+        if(change.status==='boarding'&&!Object.prototype.hasOwnProperty.call(change,'passengers')&&!Object.prototype.hasOwnProperty.call(change,'luggage')){
+          const boardingSnapshot=createBoardingSnapshot(flight.capacity);
+          flight.passengers=boardingSnapshot.passengers;
+          flight.luggage=boardingSnapshot.luggage;
+          fieldSet.add('passengers');
+          fieldSet.add('luggage');
+        }
+        if(change.status==='departed'){
+          flight.passengers=flight.capacity;
+          flight.luggage=flight.capacity;
+          fieldSet.add('passengers');
+          fieldSet.add('luggage');
+        }
+      }
+      if(Object.prototype.hasOwnProperty.call(change,'passengers')){
+        flight.passengers=clamp(change.passengers,0,flight.capacity);
+        fieldSet.add('passengers');
+      }
+      if(Object.prototype.hasOwnProperty.call(change,'luggage')){
+        flight.luggage=clamp(change.luggage,0,flight.passengers);
+        fieldSet.add('luggage');
+      }
     });
 
     updateCount+=updates.length;
@@ -652,15 +717,35 @@ renderSQL();
     for(let i=0;i<count;i++){
       const idx=Math.floor(Math.random()*TOTAL);
       const update={idx};
-      const fieldRoll=Math.random();
-      if(fieldRoll<0.45){
-        update.status=statuses[Math.floor(Math.random()*statuses.length)];
-        columnCounts.status++;
-      } else if(fieldRoll<0.8){
-        const [h,m]=flights[idx].dep.split(':').map(Number);
-        update.dep=padTime(h,Math.max(0,Math.min(59,m+Math.floor(Math.random()*10)-4)));
-        columnCounts.dep++;
-      } else {
+      const flight=flights[idx];
+      const boardingProgress=progressBoarding(flight);
+      if(boardingProgress&&Math.random()<0.38){
+        update.passengers=boardingProgress.passengers;
+        update.luggage=boardingProgress.luggage;
+      }else{
+        const fieldRoll=Math.random();
+        if(fieldRoll<0.45){
+          update.status=statuses[Math.floor(Math.random()*statuses.length)];
+          columnCounts.status++;
+          if(update.status==='boarding'){
+            const boardingSnapshot=createBoardingSnapshot(flight.capacity);
+            update.passengers=boardingSnapshot.passengers;
+            update.luggage=boardingSnapshot.luggage;
+          }
+          if(update.status==='departed'){
+            update.passengers=flight.capacity;
+            update.luggage=flight.capacity;
+          }
+        } else if(fieldRoll<0.8){
+          const [h,m]=flight.dep.split(':').map(Number);
+          update.dep=padTime(h,Math.max(0,Math.min(59,m+Math.floor(Math.random()*10)-4)));
+          columnCounts.dep++;
+        } else {
+          update.gate=gates[Math.floor(Math.random()*gates.length)];
+          columnCounts.gate++;
+        }
+      }
+      if(Math.random()<0.18&&!Object.prototype.hasOwnProperty.call(update,'gate')&&!Object.prototype.hasOwnProperty.call(update,'status')){
         update.gate=gates[Math.floor(Math.random()*gates.length)];
         columnCounts.gate++;
       }
@@ -673,8 +758,21 @@ renderSQL();
     if(!('Worker' in window))return null;
     const workerScript=`
       let flights=[];let statuses=[];let gates=[];
+      const clamp=(value,min,max)=>Math.min(max,Math.max(min,value));
       const padTime=(h,m)=>String((h%24+24)%24).padStart(2,'0')+':'+String(m).padStart(2,'0');
       const shiftDep=(dep)=>{const parts=dep.split(':').map(Number);const h=parts[0];const m=parts[1];const nm=Math.max(0,Math.min(59,m+Math.floor(Math.random()*10)-4));return padTime(h,nm);};
+      const createBoardingSnapshot=(capacity)=>{
+        const pax=Math.floor(capacity*(0.3+Math.random()*0.45));
+        const bags=Math.min(pax,Math.floor(pax*(0.55+Math.random()*0.25)));
+        return {passengers:pax,luggage:bags};
+      };
+      const progressBoarding=(flight)=>{
+        if(flight.status!=='boarding')return null;
+        const nextPassengers=clamp((flight.passengers||0)+(2+Math.floor(Math.random()*8)),0,flight.capacity||220);
+        const nextLuggage=clamp((flight.luggage||0)+(1+Math.floor(Math.random()*6)),0,nextPassengers);
+        if(nextPassengers===flight.passengers&&nextLuggage===flight.luggage)return null;
+        return {passengers:nextPassengers,luggage:nextLuggage};
+      };
       self.onmessage=(event)=>{
         const data=event.data||{};
         if(data.type==='init'){flights=data.flights||[];statuses=data.statuses||[];gates=data.gates||[];return;}
@@ -684,24 +782,46 @@ renderSQL();
         const columnCounts={dep:0,gate:0,status:0};
         for(let i=0;i<count;i++){
           const idx=Math.floor(Math.random()*flights.length);
+          const current=flights[idx];
+          if(!current)continue;
           const update={idx};
-          const roll=Math.random();
-          if(roll<0.45){
-            update.status=statuses[Math.floor(Math.random()*statuses.length)];
-            flights[idx].status=update.status;
-            columnCounts.status++;
-          } else if(roll<0.8){
-            update.dep=shiftDep(flights[idx].dep);
-            flights[idx].dep=update.dep;
-            columnCounts.dep++;
+          const boardingProgress=progressBoarding(current);
+          if(boardingProgress&&Math.random()<0.38){
+            update.passengers=boardingProgress.passengers;
+            update.luggage=boardingProgress.luggage;
+            current.passengers=boardingProgress.passengers;
+            current.luggage=boardingProgress.luggage;
           } else {
-            update.gate=gates[Math.floor(Math.random()*gates.length)];
-            flights[idx].gate=update.gate;
-            columnCounts.gate++;
+            const roll=Math.random();
+            if(roll<0.45){
+              update.status=statuses[Math.floor(Math.random()*statuses.length)];
+              current.status=update.status;
+              columnCounts.status++;
+              if(update.status==='boarding'){
+                const boardingSnapshot=createBoardingSnapshot(current.capacity||220);
+                update.passengers=boardingSnapshot.passengers;
+                update.luggage=boardingSnapshot.luggage;
+                current.passengers=boardingSnapshot.passengers;
+                current.luggage=boardingSnapshot.luggage;
+              } else if(update.status==='departed'){
+                update.passengers=current.capacity||220;
+                update.luggage=current.capacity||220;
+                current.passengers=update.passengers;
+                current.luggage=update.luggage;
+              }
+            } else if(roll<0.8){
+              update.dep=shiftDep(current.dep);
+              current.dep=update.dep;
+              columnCounts.dep++;
+            } else {
+              update.gate=gates[Math.floor(Math.random()*gates.length)];
+              current.gate=update.gate;
+              columnCounts.gate++;
+            }
           }
-          if(Math.random()<0.18&&!Object.prototype.hasOwnProperty.call(update,'gate')){
+          if(Math.random()<0.18&&!Object.prototype.hasOwnProperty.call(update,'gate')&&!Object.prototype.hasOwnProperty.call(update,'status')){
             update.gate=gates[Math.floor(Math.random()*gates.length)];
-            flights[idx].gate=update.gate;
+            current.gate=update.gate;
             columnCounts.gate++;
           }
           updates.push(update);
